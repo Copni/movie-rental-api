@@ -38,6 +38,26 @@ def trigger_refresh():
         st.warning('Veuillez rafraichir la page pour voir les dernieres donnees.')
 
 
+SORT_OPTIONS = {
+    "Titre (A -> Z)": ("title", False),
+    "Titre (Z -> A)": ("title", True),
+    "Annee (recent -> ancien)": ("year", True),
+    "Annee (ancien -> recent)": ("year", False),
+    "Note (meilleure -> plus basse)": ("rating", True),
+    "Disponibilite (disponible en premier)": ("is_available", True),
+    "Disponibilite (loue en premier)": ("is_available", False),
+}
+
+
+def sort_movies(movies, sort_key, reverse=False):
+    def normalize(value):
+        if isinstance(value, str):
+            return value.casefold()
+        return value if value is not None else -1
+
+    return sorted(movies, key=lambda movie: normalize(movie.get(sort_key)), reverse=reverse)
+
+
 tab1, tab2, tab3 = st.tabs(["📜 Films", "🎥 Détails / Location", "🛠 Gestion"])
 
 with tab1:
@@ -45,9 +65,28 @@ with tab1:
     if st.button("Rafraichir la liste"):
         trigger_refresh()
     movies = get_movies()
-    for m in movies:
-        st.write(f"**{m['title']}** ({m['year']}) — {m['genre']}")
-        st.caption(f"ID: {m['id']} | {'✅ Disponible' if m['is_available'] else '❌ Loué'}")
+    if not movies:
+        st.info("Aucun film n'est encore enregistre.")
+    else:
+        sort_labels = list(SORT_OPTIONS.keys())
+        sort_choice = st.selectbox("Trier par", sort_labels, index=0)
+        sort_key, reverse = SORT_OPTIONS[sort_choice]
+        movies = sort_movies(movies, sort_key, reverse)
+        for movie in movies:
+            available = movie["is_available"]
+            status_text = ":green[Disponible]" if available else ":red[Loue]"
+            renter = movie.get('renter_name') or "-"
+            with st.container():
+                col_main, col_meta = st.columns([4, 1])
+                col_main.markdown(f"**{movie['title']}** ({movie['year']})")
+                col_main.caption(f"{movie['genre']} | {movie['duration_min']} min | Note {movie['rating']}/10")
+                if movie.get('description'):
+                    col_main.write(movie['description'])
+                col_meta.markdown(status_text)
+                col_meta.caption(f"ID {movie['id']}")
+                if not available:
+                    col_meta.caption(f"Locataire : {renter}")
+            st.divider()
 
 with tab2:
     st.subheader("Details / Louer / Rendre")
