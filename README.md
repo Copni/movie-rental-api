@@ -2,9 +2,14 @@
 ## Equipe
 - Ali Belhassen
 - Nicolas Papleux
-## Arborescence du projet
-film_rental/
 
+## Lancer le projet
+Le lancement se fait en deux commandes :
+- 1. `uvicorn app.main:app --reload` (pour lancer le serv)
+- 2. `streamlit run streamlit_app.py` (pour lancer le front)
+## Arborescence du projet
+
+film_rental/
 ├─ app/                       # Dossier principal du backend FastAPI
 │  ├─ main.py                 # Point d'entrée du serveur FastAPI
 │  ├─ database.py             # Connexion et configuration de la base SQLite
