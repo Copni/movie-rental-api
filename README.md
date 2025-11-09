@@ -5,10 +5,10 @@
 
 ## Lancer le projet
 Le lancement se fait en deux commandes :
-- 1. `uvicorn app.main:app --reload` (pour lancer le serv)
-- 2. `streamlit run streamlit_app.py` (pour lancer le front)
+- `uvicorn app.main:app --reload` (pour lancer le serv)
+- `streamlit run streamlit_app.py` (pour lancer le front)
 ## Arborescence du projet
-
+```
 film_rental/
 ├─ app/                       # Dossier principal du backend FastAPI
 │  ├─ main.py                 # Point d'entrée du serveur FastAPI
@@ -24,7 +24,7 @@ film_rental/
 ├─ requirements.txt           # Liste des dépendances Python
 │
 └─ README.md                  # Documentation du projet
-
+```
 ## Modules utilisés
 
 - FastAPI: framework web pour créer une API REST.
