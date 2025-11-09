@@ -4,6 +4,7 @@
 - Nicolas Papleux
 ## Arborescence du projet
 film_rental/
+
 ├─ app/                       # Dossier principal du backend FastAPI
 │  ├─ main.py                 # Point d'entrée du serveur FastAPI
 │  ├─ database.py             # Connexion et configuration de la base SQLite
