@@ -5,7 +5,7 @@
 
 ## Lancer le projet
 Le lancement se fait en deux commandes :
-- `uvicorn app.main:app --reload` (pour lancer le micro-service)
+- `uvicorn app.main:app --reload` (pour lancer l'application)
 - `streamlit run streamlit_app.py` (pour lancer le front)
 ## Arborescence du projet
 ```
