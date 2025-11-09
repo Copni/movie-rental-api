@@ -1,5 +1,6 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine # Choix d'utiliser l'équivalent sqlalchemy par rapport à JPA API vu en cours
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
+
 
 DATABASE_URL = "sqlite:///./movies.db"
 

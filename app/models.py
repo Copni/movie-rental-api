@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
 from app.database import Base
 
+# Utilisation de la bibliothèque SQLAlchemy pour définir les attributs de la table movies
 class Movie(Base):
     __tablename__ = "movies"
 
@@ -14,7 +15,6 @@ class Movie(Base):
     duration_min: Mapped[int] = mapped_column(Integer)
     director: Mapped[str] = mapped_column(String(150))
     rating: Mapped[float] = mapped_column(Float, default=0.0)
-
     is_available: Mapped[bool] = mapped_column(Boolean, default=True)
     rented_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     renter_name: Mapped[str | None] = mapped_column(String(150), nullable=True)

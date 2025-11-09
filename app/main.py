@@ -8,24 +8,26 @@ app = FastAPI(title="Film Rental API", version="2.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["*"], # Autorisation de toutes les origines
+    allow_methods=["*"], # Autorisation de toutes les méthodes HTTP
+    allow_headers=["*"], # Autorisation de tous types d'en-têtes
 )
 
+# Le code suivant crée les tables dans la base de données si elles n'existent pas déjà.
 Base.metadata.create_all(bind=engine)
 
 def seed_data():
     db = SessionLocal()
-    if db.query(Movie).count() == 0:
-        films = [
-            Movie(title="Inception", genre="Sci-Fi", year=2010, description="Dreams within dreams", duration_min=148, director="Nolan", rating=8.8),
-            Movie(title="The Matrix", genre="Action", year=1999, description="Simulation and reality", duration_min=136, director="Wachowski", rating=8.7),
-        ]
-        db.add_all(films)
-        db.commit()
-    db.close()
-
+    try:
+        if db.query(Movie).count() == 0:
+            films = [
+                Movie(title="Inception", genre="Sci-Fi", year=2010, description="Dreams within dreams", duration_min=148, director="Nolan", rating=8.8),
+                Movie(title="The Matrix", genre="Action", year=1999, description="Simulation and reality", duration_min=136, director="Wachowski", rating=8.7),
+            ]
+            db.add_all(films)
+            db.commit()
+    finally:
+        db.close()
 seed_data()
 
 app.include_router(movies_router.router)

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 
+# Utilisation de la bibliothèque Pydantic pour définir les schémas de données
 class MovieBase(BaseModel):
     title: str
     genre: str
@@ -10,9 +11,11 @@ class MovieBase(BaseModel):
     director: str
     rating: float = Field(0.0, ge=0, le=10)
 
+# Classe utilisée pour la création d’un film (POST /movies)
 class MovieCreate(MovieBase):
     pass
 
+# Classe utilisée pour la mise à jour d’un film (PUT /movies/{id})
 class MovieUpdate(MovieBase):
     pass
 
