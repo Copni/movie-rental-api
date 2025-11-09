@@ -29,6 +29,15 @@ def create_movie(data):
 def delete_movie(mid):
     requests.delete(f"{API_URL}/movies/{mid}")
 
+
+def trigger_refresh():
+    rerun_fn = getattr(st, 'experimental_rerun', None) or getattr(st, 'rerun', None)
+    if rerun_fn:
+        rerun_fn()
+    else:
+        st.warning('Veuillez rafraichir la page pour voir les dernieres donnees.')
+
+
 tab1, tab2, tab3 = st.tabs(["📜 Films", "🎥 Détails / Location", "🛠 Gestion"])
 
 with tab1:
@@ -50,10 +59,12 @@ with tab2:
             name = st.text_input("Nom du locataire")
             if st.button("📦 Louer"):
                 rent_movie(movie_id, name)
+                trigger_refresh()
                 st.success("Film loué ✅")
         else:
             if st.button("↩️ Rendre"):
                 return_movie(movie_id)
+                trigger_refresh()
                 st.success("Film rendu ✅")
 
 with tab3:
@@ -71,9 +82,11 @@ with tab3:
             data = dict(title=title, genre=genre, year=int(year), description=description,
                         duration_min=int(duration), director=director, rating=float(rating))
             create_movie(data)
+            trigger_refresh()
             st.success("Film ajouté ✅")
 
     del_id = st.number_input("ID à supprimer", min_value=1, step=1)
     if st.button("🗑 Supprimer"):
         delete_movie(del_id)
+        trigger_refresh()
         st.warning("Film supprimé ❌")
