@@ -48,24 +48,33 @@ with tab1:
         st.caption(f"ID: {m['id']} | {'✅ Disponible' if m['is_available'] else '❌ Loué'}")
 
 with tab2:
-    st.subheader("Détails / Louer / Rendre")
-    movie_id = st.number_input("ID du film", min_value=1, step=1)
-    if st.button("Afficher"):
-        movie = get_movie(movie_id)
-        st.write(f"### {movie['title']} ({movie['year']})")
-        st.write(movie["description"])
-        st.write(f"Réalisateur : {movie['director']} | Note : {movie['rating']}")
-        if movie["is_available"]:
-            name = st.text_input("Nom du locataire")
-            if st.button("📦 Louer"):
-                rent_movie(movie_id, name)
-                trigger_refresh()
-                st.success("Film loué ✅")
-        else:
-            if st.button("↩️ Rendre"):
-                return_movie(movie_id)
-                trigger_refresh()
-                st.success("Film rendu ✅")
+    st.subheader("Details / Louer / Rendre")
+    movies_for_select = get_movies()
+    if not movies_for_select:
+        st.info("Aucun film disponible pour le moment.")
+    else:
+        options = {
+            f"{m['title']} ({m['year']}) - ID {m['id']}": m for m in movies_for_select
+        }
+        selection = st.selectbox("Choisissez un film", list(options.keys()))
+        movie_choice = options[selection]
+        movie_id = movie_choice["id"]
+        if st.button("Afficher"):
+            movie = get_movie(movie_id)
+            st.write(f"### {movie['title']} ({movie['year']})")
+            st.write(movie["description"])
+            st.write(f"Realisateur : {movie['director']} | Note : {movie['rating']}")
+            if movie["is_available"]:
+                name = st.text_input("Nom du locataire")
+                if st.button("🎬 Louer"):
+                    rent_movie(movie_id, name)
+                    trigger_refresh()
+                    st.success("Film loue ✅.")
+            else:
+                if st.button("🔁 Rendre"):
+                    return_movie(movie_id)
+                    trigger_refresh()
+                    st.success("Film rendu ✅.")
 
 with tab3:
     st.subheader("Ajouter ou supprimer un film")
