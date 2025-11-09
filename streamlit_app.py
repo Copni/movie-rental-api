@@ -1,11 +1,14 @@
 import streamlit as st
 import requests
 
+# Client Streamlit minimal pour l'API de location de films.
 API_URL = "http://localhost:8000"
 
-st.set_page_config(page_title="🎬 Location de Films", page_icon="🎬")
-st.title("🎬 Application de location de films")
+st.set_page_config(page_title="Location de Films", page_icon="🎬")
+st.title("Application de location de films")
 
+
+#Accès HTTP vers l'API
 def get_movies():
     r = requests.get(f"{API_URL}/movies")
     return r.json()
@@ -30,7 +33,9 @@ def delete_movie(mid):
     requests.delete(f"{API_URL}/movies/{mid}")
 
 
+# Utilitaires UI
 def trigger_refresh():
+    """Force un rafraîchissement compatible avec plusieurs versions de Streamlit."""
     rerun_fn = getattr(st, 'experimental_rerun', None) or getattr(st, 'rerun', None)
     if rerun_fn:
         rerun_fn()
@@ -38,6 +43,7 @@ def trigger_refresh():
         st.warning('Veuillez rafraichir la page pour voir les dernieres donnees.')
 
 
+# Options de tri affichées à l'utilisateur et leurs clés associées
 SORT_OPTIONS = {
     "Titre (A -> Z)": ("title", False),
     "Titre (Z -> A)": ("title", True),
@@ -48,7 +54,7 @@ SORT_OPTIONS = {
     "Disponibilite (loue en premier)": ("is_available", False),
 }
 
-
+#Trie la liste de films en gérant chaînes (case-insensitive) et None.
 def sort_movies(movies, sort_key, reverse=False):
     def normalize(value):
         if isinstance(value, str):
@@ -58,8 +64,10 @@ def sort_movies(movies, sort_key, reverse=False):
     return sorted(movies, key=lambda movie: normalize(movie.get(sort_key)), reverse=reverse)
 
 
+#Interface en trois onglets 
 tab1, tab2, tab3 = st.tabs(["📜 Films", "🎥 Détails / Location", "🛠 Gestion"])
 
+# Onglet 1 : Liste des films avec options de tri
 with tab1:
     st.subheader("Liste des films")
     if st.button("Rafraichir la liste"):
@@ -88,6 +96,7 @@ with tab1:
                     col_meta.caption(f"Locataire : {renter}")
             st.divider()
 
+# Onglet 2 : Détails d'un film, location et retour
 with tab2:
     st.subheader("Details / Louer / Rendre")
     movies_for_select = get_movies()
@@ -118,6 +127,7 @@ with tab2:
                 st.success("Film rendu.")
                 trigger_refresh()
 
+# Onglet 3 : Ajout et suppression de films
 with tab3:
     st.subheader("Ajouter ou supprimer un film")
     with st.form("ajout"):
