@@ -42,6 +42,8 @@ tab1, tab2, tab3 = st.tabs(["📜 Films", "🎥 Détails / Location", "🛠 Gest
 
 with tab1:
     st.subheader("Liste des films")
+    if st.button("Rafraichir la liste"):
+        trigger_refresh()
     movies = get_movies()
     for m in movies:
         st.write(f"**{m['title']}** ({m['year']}) — {m['genre']}")
@@ -56,25 +58,26 @@ with tab2:
         options = {
             f"{m['title']} ({m['year']}) - ID {m['id']}": m for m in movies_for_select
         }
-        selection = st.selectbox("Choisissez un film", list(options.keys()))
+        labels = list(options.keys())
+        selection = st.selectbox("Choisissez un film", labels)
         movie_choice = options[selection]
         movie_id = movie_choice["id"]
-        if st.button("Afficher"):
-            movie = get_movie(movie_id)
-            st.write(f"### {movie['title']} ({movie['year']})")
-            st.write(movie["description"])
-            st.write(f"Realisateur : {movie['director']} | Note : {movie['rating']}")
-            if movie["is_available"]:
-                name = st.text_input("Nom du locataire")
-                if st.button("🎬 Louer"):
-                    rent_movie(movie_id, name)
-                    trigger_refresh()
-                    st.success("Film loue ✅.")
-            else:
-                if st.button("🔁 Rendre"):
-                    return_movie(movie_id)
-                    trigger_refresh()
-                    st.success("Film rendu ✅.")
+        movie = get_movie(movie_id)
+        st.write(f"### {movie['title']} ({movie['year']})")
+        st.write(movie["description"])
+        st.write(f"Realisateur : {movie['director']} | Note : {movie['rating']}")
+        if movie["is_available"]:
+            name = st.text_input("Nom du locataire", key=f"rent_name_{movie_id}")
+            if st.button("Louer", key=f"rent_btn_{movie_id}"):
+                rent_movie(movie_id, name)
+                st.success("Film loue.")
+                trigger_refresh()
+        else:
+            st.caption(f"Loue par : {movie.get('renter_name') or 'Inconnu'}")
+            if st.button("Rendre", key=f"return_btn_{movie_id}"):
+                return_movie(movie_id)
+                st.success("Film rendu.")
+                trigger_refresh()
 
 with tab3:
     st.subheader("Ajouter ou supprimer un film")
@@ -97,5 +100,5 @@ with tab3:
     del_id = st.number_input("ID à supprimer", min_value=1, step=1)
     if st.button("🗑 Supprimer"):
         delete_movie(del_id)
+        st.warning("Film supprime.")
         trigger_refresh()
-        st.warning("Film supprimé ❌")
