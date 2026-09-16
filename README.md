@@ -1,35 +1,49 @@
-# Projet OOP : application de location de film en python
-## Equipe
-- Ali Belhassen
-- Nicolas Papleux
+# Movie Rental API
 
-## Lancer le projet
-Le lancement se fait en deux commandes :
-- `uvicorn app.main:app --reload` (pour lancer l'application)
-- `streamlit run streamlit_app.py` (pour lancer le front)
-## Arborescence du projet
-```
-film_rental/
-├─ app/                       # Dossier principal du backend FastAPI
-│  ├─ main.py                 # Point d'entrée du serveur FastAPI
-│  ├─ database.py             # Connexion et configuration de la base SQLite
-│  ├─ models.py               # Modèles ORM (structure des tables)
-│  ├─ schemas.py              # Modèles Pydantic (validation et structure des données)
-│  ├─ crud.py                 # Logique métier et accès à la base (Create, Read, Update, Delete)
-│  └─ routers/                # Dossier contenant les routes de l’API
-│     └─ movies.py            # Endpoints REST liés aux films (/movies)
-│
-├─ streamlit_app.py           # Interface web Streamlit (front-end)
-│
-├─ requirements.txt           # Liste des dépendances Python
-│
-└─ README.md                  # Documentation du projet
-```
-## Modules utilisés
+A movie rental platform built around a REST API. The backend exposes movie
+management endpoints; a lightweight Streamlit client consumes them over HTTP.
 
-- FastAPI: framework web pour créer une API REST.
-- Uvicorn: serveur web ASGI utilisé pour exécuter l’application FastAPI.
-- SQLAlchemy: ORM équivalent à JPA API en Python.
-- Pydantic: pour gèrer la validation et la conversion automatique des données entrantes/sortante.
-- Streamlit: framework Python pour un front simple.
-- Requests: bibliothèque utilisée par Streamlit pour communiquer avec l’API FastAPI via des requêtes HTTP.
+## Architecture
+
+The API and the front-end are two separate processes that communicate only
+through HTTP, so the interface can be replaced without touching the backend.
+
+```text
+app/
+├─ main.py          # FastAPI entry point
+├─ database.py      # SQLite connection and session handling
+├─ models.py        # SQLAlchemy ORM models
+├─ schemas.py       # Pydantic schemas (validation, serialisation)
+├─ crud.py          # Business logic and database access
+└─ routers/
+   └─ movies.py     # REST endpoints under /movies
+
+streamlit_app.py    # Streamlit client
+```
+
+## Stack
+
+| Layer | Technology |
+| --- | --- |
+| API | FastAPI, Uvicorn (ASGI) |
+| Persistence | SQLAlchemy ORM, SQLite |
+| Validation | Pydantic |
+| Front-end | Streamlit, Requests |
+
+## Running it
+
+```bash
+pip install -r requirements.txt
+uvicorn app.main:app --reload     # API on http://127.0.0.1:8000
+streamlit run streamlit_app.py    # UI on http://127.0.0.1:8501
+```
+
+Interactive API documentation is generated automatically at
+`http://127.0.0.1:8000/docs`.
+
+## What this project covers
+
+- Layered design: routing, schemas, business logic and persistence are separated.
+- Full CRUD over a relational model through an ORM rather than raw SQL.
+- Input validation and response typing handled declaratively by Pydantic.
+- A client that talks to the API exactly as any external consumer would.
